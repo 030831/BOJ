@@ -9,14 +9,18 @@ int main() {
     string a;
 
     cin >> a;
+    
 
     vector<string> name ;
 
-    string b;
-
     for (int i = 0 ; i < a.length() ; i++ ) {
+        
+        string b ;
 
-        b=a.substr(i,a.length()-i);    
+        for (int j = i ; j < a.length() ; j ++) {
+            b+=a[j];
+        }
+
         name.push_back(b);
     }
 
