@@ -18,20 +18,20 @@ int main() {
 
     for (int i = 0 ; i < 5 ; i ++ ) {
         
-        string find_name = name[i];
-        if ( find_name.find("FBI")!=string::npos ) {
+        if ( name[i].find("FBI") != -1 ) {
             check.push_back(i+1);
         }
     }
+
 
     if (check.size()==0) {
         cout << "HE GOT AWAY!";
     }
     else {
-        for (int i = 0 ; i  < check.size() ; i++) {
-            cout << check[i] << " ";
+        for (auto i : check) {
+            cout << i << " ";
         }
     }
-
 }
+
 
