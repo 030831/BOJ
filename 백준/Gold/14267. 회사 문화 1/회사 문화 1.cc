@@ -3,7 +3,7 @@
 
 using namespace std;
 
-long long dp[100001]={0};
+int dp[100001]={0};
 
 void DFS(int node , vector<vector<int>> &graph , vector<bool> &visit)
 {
