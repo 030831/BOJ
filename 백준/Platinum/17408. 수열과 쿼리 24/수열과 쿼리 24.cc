@@ -16,10 +16,7 @@ pair<int , int> merge(pair<int,int> a , pair<int,int>b)
     {
         a.second=b.first; // 더 큰값으로 바꾼다.
     }
-    else if (a.second<b.second)
-    {
-        a.second=b.second;
-    }
+
 
     return a;
 }
