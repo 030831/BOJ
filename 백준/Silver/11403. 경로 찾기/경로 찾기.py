@@ -1,7 +1,7 @@
 import sys
 input=sys.stdin.readline
 
-def Flody_Warshcall():
+def Floyd_Warshcall():
 
     for k in range(N):
         for i in range(N):
@@ -14,7 +14,7 @@ N=int(input())
 graph=[ list(map(int,input().split())) for _ in range(N) ]
 
 
-Flody_Warshcall()
+Floyd_Warshcall()
 
 for i in graph:
     print(*i)
