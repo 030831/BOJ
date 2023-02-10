@@ -30,7 +30,7 @@ def BFS():
 
 N,M=map(int,input().split())
 
-deq=deque() ;  deq.append((0,0)) ; deq.append((1,0))
+deq=deque() ;  deq.append((1,0))
 
 visit=[False]*101
 N_list=[ list(map(int,input().split())) for _ in range(N) ]
