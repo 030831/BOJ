@@ -1,42 +1,43 @@
+# 7569 토마토
+
+from sys import stdin
 from collections import deque
-import sys
-input=sys.stdin.readline
 
-dx = [-1,1,0,0,0,0]
-dy = [0,0,1,-1,0,0]
-dz = [0,0,0,0,1,-1]
+x_size, y_size, z_size = list(map(int, input().split(" ")))
+graph = [[list(map(int, stdin.readline().rstrip().split(" "))) for y in range(y_size)] for z in range(z_size)]
 
-graph=[] ; deq=deque()
-m,n,h=map(int,input().split())
-for i in range(h):
-    tmp = []
-    for j in range(n):
-        tmp.append(list(map(int,sys.stdin.readline().split())))
-        for k in range(m):
-            if tmp[j][k]==1:
-                deq.append([i,j,k])
-    graph.append(tmp)
+delta_list = [(-1,0,0),(1,0,0),(0,-1,0),(0,1,0),(0,0,-1),(0,0,1)]
 
-while deq:
-    x,y,z=deq.popleft()
+def bfs():
+    while queue:
+        x,y,z = queue.popleft()
+        for dx, dy, dz in delta_list:
+            new_x = x + dx
+            new_y = y + dy
+            new_z = z + dz
+            if new_x < 0 or new_x >= x_size or new_y < 0 or new_y >= y_size or new_z < 0 or new_z >= z_size:
+                continue
+            if graph[new_z][new_y][new_x] == 0:
+                graph[new_z][new_y][new_x] = graph[z][y][x] + 1
+                queue.append((new_x, new_y, new_z))
+    return graph
 
-    for i in range(6):
-        a=x+dx[i]
-        b=y+dy[i]
-        c=z+dz[i]
+queue = deque()
+for x in range(x_size):
+    for y in range(y_size):
+        for z in range(z_size):
+            if graph[z][y][x] == 1:
+                queue.append([x,y,z])
+bfs()
 
-        if 0<=a<h and 0<=b<n and 0<=c<m and graph[a][b][c]==0:
-            deq.append([a,b,c])
-            graph[a][b][c]=graph[x][y][z]+1
+def check_unripe_tomato() -> int:
+    max_temp = 0
+    for x in range(x_size):
+        for y in range(y_size):
+            for z in range(z_size):
+                if not graph[z][y][x]:
+                    return -1
+                max_temp = max(graph[z][y][x]-1,max_temp)
+    return max_temp
 
-day=0
-for i in graph:
-    for j in i:
-        for k in j:
-            if k==0:
-                print(-1)
-                exit()
-        day=max(day,max(j))
-
-print(day-1)
-
+print(check_unripe_tomato())
