@@ -145,7 +145,7 @@ class Input_Move extends Input_data {
 
 class Input_Monster  extends Input_data {
     public static void Input_Monster_Method(Input_data Id , BufferedReader br , BufferedWriter bw ,
-        ArrayList<Monster> monsters) throws IOException {
+                                            ArrayList<Monster> monsters) throws IOException {
 
         for (int i = 0 ; i < Id.Monster_Count ; i++) {
 
@@ -155,7 +155,7 @@ class Input_Monster  extends Input_data {
             // Readlne 으로 한줄을 입력받고 StringTokenizer 을 통해 공백으로 입력값을 나눈다.
 
             monsters.add(new Monster(Integer.parseInt(st.nextToken()) , Integer.parseInt(st.nextToken()), st.nextToken() ,
-            Integer.parseInt(st.nextToken()) , Integer.parseInt(st.nextToken()) ,Integer.parseInt(st.nextToken()), Integer.parseInt(st.nextToken())));
+                    Integer.parseInt(st.nextToken()) , Integer.parseInt(st.nextToken()) ,Integer.parseInt(st.nextToken()), Integer.parseInt(st.nextToken())));
 
             //monsters 객체에 x,y 좌표 , 이름 , 공격력 , 방어력 , 최대체력 , 경험치를 입력한 값을 공백으로 나누어서 저장한다.
         }
@@ -165,7 +165,7 @@ class Input_Monster  extends Input_data {
 
 class Input_Box extends Input_data {
     public static void Input_Box_Method(Input_data Id, BufferedReader br , BufferedWriter bw ,
-        ArrayList<Box_Weapon> box_weapons ,ArrayList<Box_Shield> box_shields, ArrayList<Box_Accessories> box_accessories ) throws IOException {
+                                        ArrayList<Box_Weapon> box_weapons ,ArrayList<Box_Shield> box_shields, ArrayList<Box_Accessories> box_accessories ) throws IOException {
         //장비는 무기(W), 갑옷(A), 장신구(O)
         Box box = new Box(); // 박스 정소를 저장할 객체 생성
 
@@ -219,7 +219,7 @@ class Game {
     }
 
     public static int Move_Method(BufferedReader br , BufferedWriter bw  , ArrayList<Monster> monsters , Input_data Id , Character character,
-      ArrayList<Box_Weapon> box_weapons , ArrayList<Box_Shield> box_shields ,ArrayList<Box_Accessories> box_accessories) throws IOException {
+                                  ArrayList<Box_Weapon> box_weapons , ArrayList<Box_Shield> box_shields ,ArrayList<Box_Accessories> box_accessories) throws IOException {
 
         /*
         for (int i = 0 ; i < Id.N ; i++) {
@@ -247,11 +247,8 @@ class Game {
         if (Id.Grid[character.Character_Y][character.Character_X]=='B') {
             return Check_Box_Method(box_weapons , box_shields , box_accessories, Id , character);
         }
-        else if (Id.Grid[character.Character_Y][character.Character_X]=='&') {
+        else if (Id.Grid[character.Character_Y][character.Character_X]=='&' || Id.Grid[character.Character_Y][character.Character_X]=='M' ) {
             return Fight_Monster_Method(monsters , Id , character);
-        }
-        else if (Id.Grid[character.Character_Y][character.Character_X]=='M') {
-            return Fight_Boss_Method(monsters , Id , character);
         }
         else if (Id.Grid[character.Character_Y][character.Character_X]=='^') {
             return Trap_Method(Id, character);
@@ -267,79 +264,7 @@ class Game {
     H는 몬스터의 최대 체력이다.
     E는 몬스터를 쓰러뜨렸을 때 얻을 수 있는 경험치이다.
      */
-    public static int Fight_Monster_Method(ArrayList<Monster> monsters ,  Input_data Id , Character character) {
-        for (int i = 0 ; i < monsters.size() ; i++) {
-            if (monsters.get(i).y-1==character.Character_X && monsters.get(i).x-1==character.Character_Y) {
-                Game_Truns = 0;
 
-                Monster_Max_Hp = monsters.get(i).H; // 몬스터의 최대 체력을 저장한다.
-
-                while (true) {
-                    if (Game_Truns==0) {
-                        if (character.Accessories.contains("CO")) {
-                            if (character.Accessories.contains("DX")) {
-                                monsters.get(i).H-=Math.max(1,(character.Attack+character.Weapon)*3-monsters.get(i).A);
-                            }
-                            else {
-                                monsters.get(i).H-=Math.max(1,(character.Attack+character.Weapon)*2-monsters.get(i).A);
-                            }
-                        }
-                        else {
-                            monsters.get(i).H-=Math.max(1,(character.Attack+character.Weapon)-monsters.get(i).A);
-                        }
-                    }
-                    Game_Truns++;
-
-                    if (monsters.get(i).H<=0) {
-                        if (character.Accessories.contains("HR")) {
-                            character.Now_Hp=Math.min(character.Max_HP , character.Now_Hp+3);
-                        }
-                        if (character.Accessories.contains("EX")) {
-                            character.Exp+=Math.floor(monsters.get(i).E*1.2);
-                        }
-                        else {
-                            character.Exp+=monsters.get(i).E;
-                        }
-
-                        if (character.Exp>=character.Level*5) {
-                            character.Max_HP+=5;
-                            character.Now_Hp=character.Max_HP;
-                            character.Attack+=2;
-                            character.Defense+=2;
-                            character.Exp=0;
-                            character.Level++;
-                        }
-
-                        Id.Grid[character.Character_Y][character.Character_X]='.';
-                        return -1; // -1 은 생존을 의미한다.
-
-                    }
-
-                    if (character.Now_Hp<=0) {
-                        if (character.Accessories.contains("RE")) {
-                            character.Now_Hp=character.Max_HP;
-                            character.Character_X=character.Start_X;
-                            character.Character_Y=character.Start_Y;
-                            character.Accessories.remove("RE");
-                            monsters.get(i).H = Monster_Max_Hp; // 부활할 경우 몬스터의 체력은 최대체력으로 설정한다.
-                            return -1;
-                        }
-                        else {
-                                return i; // -1이 아닌 값은 죽음을 의미한다.
-                            }
-                        }
-
-                    if (Game_Truns%2==1) {
-                        character.Now_Hp-=Math.max(1,monsters.get(i).W - (character.Shield+character.Defense));
-                    }
-                    else {
-                        monsters.get(i).H-=Math.max(1,(character.Attack+character.Weapon)-monsters.get(i).A);
-                    }
-                }
-            }
-        }
-        return -1;
-    }
 
     public static int Check_Box_Method(ArrayList<Box_Weapon> box_weapons , ArrayList<Box_Shield> box_shields ,ArrayList<Box_Accessories> box_accessories,
                                        Input_data Id , Character character) {
@@ -375,7 +300,7 @@ class Game {
     E는 몬스터를 쓰러뜨렸을 때 얻을 수 있는 경험치이다.
     전투 중이던 몬스터가 있다면 해당 몬스터의 체력도 최대치로 회복된다.
      */
-    public static int Fight_Boss_Method(ArrayList<Monster> monsters ,  Input_data Id , Character character) {
+    public static int Fight_Monster_Method(ArrayList<Monster> monsters ,  Input_data Id , Character character) {
         for (int i = 0 ; i < monsters.size() ; i++) {
             if (monsters.get(i).y-1==character.Character_X && monsters.get(i).x-1==character.Character_Y) {
                 Game_Truns = 0;
@@ -394,7 +319,7 @@ class Game {
                         else {
                             monsters.get(i).H-=Math.max(1,(character.Attack+character.Weapon)-monsters.get(i).A);
                         }
-                        if (character.Accessories.contains("HU")) {
+                        if (character.Accessories.contains("HU") && Id.Grid[character.Character_Y][character.Character_X]=='M') {
                             character.Now_Hp= character.Max_HP;
                             monsters.get(i).H-=Math.max(1,(character.Attack+character.Weapon)-monsters.get(i).A);
                         }
@@ -421,8 +346,16 @@ class Game {
                             character.Level++;
                         }
 
-                        Id.Grid[character.Character_Y][character.Character_X]='.';
-                        return 777777; // 보스몬스터를 죽였다면.
+
+                        if (Id.Grid[character.Character_Y][character.Character_X]=='M')
+                        {
+                            Id.Grid[character.Character_Y][character.Character_X]='.';
+                            return 777777; // 보스몬스터를 죽였다면.
+                        }
+                        else{
+                            Id.Grid[character.Character_Y][character.Character_X]='.';
+                            return -1;
+                        }
 
                     }
 
@@ -475,7 +408,7 @@ class Game {
     }
 
     public static void Play_Game_Method(Input_data Id, BufferedReader br , BufferedWriter bw , Character character , ArrayList<Monster> monsters  ,
-        ArrayList<Box_Weapon> box_weapons , ArrayList<Box_Shield> box_shields ,ArrayList<Box_Accessories> box_accessories) throws IOException {
+                                        ArrayList<Box_Weapon> box_weapons , ArrayList<Box_Shield> box_shields ,ArrayList<Box_Accessories> box_accessories) throws IOException {
 
         int Game_Answer;
 
