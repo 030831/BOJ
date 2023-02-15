@@ -97,7 +97,7 @@ class Input_data { // 입력에서 주어지는 데이터를 나타내는 클래
 }
 
 class Input_Grid extends Input_data { // 그리드 입력 클래스 , 입력 데이터를 '상속'한다.
-    public static void Input_Grid_Method(Input_data Id , BufferedReader br , BufferedWriter bw) throws IOException {
+    public static void Input_Grid_Method(Input_data Id , BufferedReader br ) throws IOException {
         StringTokenizer st = new StringTokenizer(br.readLine());
         Id.N=Integer.parseInt(st.nextToken()); // 세로 길이 입력
         Id.M=Integer.parseInt(st.nextToken()); // 가로 길이 입력
@@ -110,8 +110,6 @@ class Input_Grid extends Input_data { // 그리드 입력 클래스 , 입력 데
                 Id.Grid[i][j]=Id.Input_One_Line.charAt(j); // 미리 입력받은 한줄에 대한 값을 i,j 인덱스에 그리드 값으로 할당한다.
             }
         }
-
-
     }
 
     public static void Monster_Count_Method(Input_data Id) {
@@ -138,21 +136,20 @@ class Input_Grid extends Input_data { // 그리드 입력 클래스 , 입력 데
 }
 
 class Input_Move extends Input_data {
-    public static void Input_Move_Method(Input_data Id, BufferedReader br , BufferedWriter bw ) throws IOException {
+    public static void Input_Move_Method(Input_data Id, BufferedReader br ) throws IOException {
         Id.Move=br.readLine();
     }
 }
 
 class Input_Monster  extends Input_data {
-    public static void Input_Monster_Method(Input_data Id , BufferedReader br , BufferedWriter bw ,
-                                            ArrayList<Monster> monsters) throws IOException {
+    public static void Input_Monster_Method(Input_data Id , BufferedReader br , ArrayList<Monster> monsters) throws IOException {
 
         for (int i = 0 ; i < Id.Monster_Count ; i++) {
 
             Id.Input_One_Line=br.readLine(); // 한줄을 입력받는다.
 
             StringTokenizer st = new StringTokenizer(Id.Input_One_Line);
-            // Readlne 으로 한줄을 입력받고 StringTokenizer 을 통해 공백으로 입력값을 나눈다.
+            // Readline 으로 한줄을 입력받고 StringTokenizer 을 통해 공백으로 입력값을 나눈다.
 
             monsters.add(new Monster(Integer.parseInt(st.nextToken()) , Integer.parseInt(st.nextToken()), st.nextToken() ,
                     Integer.parseInt(st.nextToken()) , Integer.parseInt(st.nextToken()) ,Integer.parseInt(st.nextToken()), Integer.parseInt(st.nextToken())));
@@ -164,8 +161,8 @@ class Input_Monster  extends Input_data {
 }
 
 class Input_Box extends Input_data {
-    public static void Input_Box_Method(Input_data Id, BufferedReader br , BufferedWriter bw ,
-                                        ArrayList<Box_Weapon> box_weapons ,ArrayList<Box_Shield> box_shields, ArrayList<Box_Accessories> box_accessories ) throws IOException {
+    public static void Input_Box_Method(Input_data Id, BufferedReader br ,
+        ArrayList<Box_Weapon> box_weapons ,ArrayList<Box_Shield> box_shields, ArrayList<Box_Accessories> box_accessories ) throws IOException {
         //장비는 무기(W), 갑옷(A), 장신구(O)
         Box box = new Box(); // 박스 정소를 저장할 객체 생성
 
@@ -198,7 +195,6 @@ class Input_Box extends Input_data {
 }
 
 class Game {
-
     static int Passed_Turns=0; // 게임의 턴을 저장할 변수
     static int Game_Truns; // 몬스터와 싸울때 턴을 저장할 변수
     static int Monster_Max_Hp; // 몬스터의 최대 체력을 저장할 변수
@@ -218,19 +214,9 @@ class Game {
         }
     }
 
-    public static int Move_Method(BufferedReader br , BufferedWriter bw  , ArrayList<Monster> monsters , Input_data Id , Character character,
+    public static int Move_Method(ArrayList<Monster> monsters , Input_data Id , Character character,
                                   ArrayList<Box_Weapon> box_weapons , ArrayList<Box_Shield> box_shields ,ArrayList<Box_Accessories> box_accessories) throws IOException {
-
-        /*
-        for (int i = 0 ; i < Id.N ; i++) {
-            for (int j = 0 ; j < Id.M ; j++) {
-                bw.write(Id.Grid[i][j]);
-            }
-            bw.newLine();
-        }
-        bw.newLine();
-
-         */
+        
         if (Id.Move.charAt(Passed_Turns)=='L' && character.Character_X-1>=0 && Id.Grid[character.Character_Y][character.Character_X-1]!='#') {
             character.Character_X--;
         }
@@ -257,15 +243,7 @@ class Game {
 
         return -1;
     }
-
-    /*
-    W는 몬스터의 공격력 값이다.
-    A는 몬스터의 방어력 값이다.
-    H는 몬스터의 최대 체력이다.
-    E는 몬스터를 쓰러뜨렸을 때 얻을 수 있는 경험치이다.
-     */
-
-
+    
     public static int Check_Box_Method(ArrayList<Box_Weapon> box_weapons , ArrayList<Box_Shield> box_shields ,ArrayList<Box_Accessories> box_accessories,
                                        Input_data Id , Character character) {
 
@@ -293,13 +271,6 @@ class Game {
     }
 
 
-    /*
-    W는 몬스터의 공격력 값이다.
-    A는 몬스터의 방어력 값이다.
-    H는 몬스터의 최대 체력이다.
-    E는 몬스터를 쓰러뜨렸을 때 얻을 수 있는 경험치이다.
-    전투 중이던 몬스터가 있다면 해당 몬스터의 체력도 최대치로 회복된다.
-     */
     public static int Fight_Monster_Method(ArrayList<Monster> monsters ,  Input_data Id , Character character) {
         for (int i = 0 ; i < monsters.size() ; i++) {
             if (monsters.get(i).y-1==character.Character_X && monsters.get(i).x-1==character.Character_Y) {
@@ -414,21 +385,21 @@ class Game {
 
 
         while (true) {
-            Game_Answer=Move_Method(br , bw ,monsters ,Id , character ,box_weapons , box_shields , box_accessories);
+            Game_Answer=Move_Method(monsters ,Id , character ,box_weapons , box_shields , box_accessories);
             Passed_Turns++;
 
             if (Game_Answer!=-1) { // 게임이 끝났다면
                 if (Game_Answer==123456) { // 가시 함정에 죽었다면
-                    Input_Game_Answer_Method(br , bw , Id , character );
+                    Input_Game_Answer_Method(bw , Id , character );
                     bw.write("YOU HAVE BEEN KILLED BY SPIKE TRAP..");
                 }
                 else if (Game_Answer==777777) { // 보스 몬스터를 죽였다면
                     Id.Grid[character.Character_Y][character.Character_X]='@';
-                    Input_Game_Answer_Method(br , bw , Id , character );
+                    Input_Game_Answer_Method(bw , Id , character );
                     bw.write("YOU WIN!");
                 }
                 else { // 몬스터한테 죽었을 경우
-                    Input_Game_Answer_Method(br , bw , Id , character );
+                    Input_Game_Answer_Method(bw , Id , character );
                     bw.write("YOU HAVE BEEN KILLED BY " + monsters.get(Game_Answer).Name + "..");
                 }
                 break;
@@ -436,14 +407,14 @@ class Game {
 
             if (Passed_Turns==Id.Move.length()) { // 모든 커멘드를 끝넀다면.
                 Id.Grid[character.Character_Y][character.Character_X]='@';
-                Input_Game_Answer_Method(br , bw , Id , character );
+                Input_Game_Answer_Method(bw , Id , character );
                 bw.write("Press any key to continue.");
                 break;
             }
         }
     }
 
-    public static void Input_Game_Answer_Method(BufferedReader br , BufferedWriter bw ,Input_data Id , Character character) throws IOException {
+    public static void Input_Game_Answer_Method(BufferedWriter bw ,Input_data Id , Character character) throws IOException {
 
         for (int i = 0 ; i < Id.N ; i++) {
             for (int j = 0 ; j < Id.M ; j++) {
@@ -470,8 +441,8 @@ public class Main {
 
 
         Input_data Id = new Input_data(); // 입력 데이터 변수를 저장할 객체 생성
-        Input_Grid.Input_Grid_Method(Id , br , bw); // 그리드 입력
-        Input_Move.Input_Move_Method(Id , br , bw); // 이동 커멘드 입력
+        Input_Grid.Input_Grid_Method(Id , br); // 그리드 입력
+        Input_Move.Input_Move_Method(Id , br); // 이동 커멘드 입력
         Input_Grid.Monster_Count_Method(Id); // 몬스터수 저장
         Input_Grid.Box_Count_Method(Id); // 박스 수 저장
 
@@ -486,10 +457,10 @@ public class Main {
 
 
         ArrayList<Monster> monsters = new ArrayList<Monster>();  // 몬스터의 특성을 저장하는 객체
-        Input_Monster.Input_Monster_Method(Id , br , bw , monsters); // 몬스터 입력
+        Input_Monster.Input_Monster_Method(Id , br , monsters); // 몬스터 입력
 
 
-        Input_Box.Input_Box_Method(Id , br , bw , box_weapons , box_shields , box_accessories); // 상자 정보 입력받기.
+        Input_Box.Input_Box_Method(Id , br , box_weapons , box_shields , box_accessories); // 상자 정보 입력받기.
 
         Character character = new Character(20,20,1,2,2,0,0,0,new ArrayList<String>() );
 
