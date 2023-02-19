@@ -1,2 +1,1 @@
-L=[ int(input()) for _ in range(3) ]
-print( sorted(L)[1] )
+print(sorted([ int(input()) for _ in range(3) ])[1])
