@@ -4,11 +4,11 @@
 
 ### 성능 요약
 
-메모리: 2168 KB, 시간: 0 ms
+메모리: 70728 KB, 시간: 472 ms
 
 ### 분류
 
-자료 구조(data_structures), 분리 집합(disjoint_set), 오프라인 쿼리(offline_queries)
+자료 구조, 분리 집합, 오프라인 쿼리
 
 ### 문제 설명
 
